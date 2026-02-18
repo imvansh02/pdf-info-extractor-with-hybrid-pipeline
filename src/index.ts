@@ -496,12 +496,23 @@ program
                     spinner.succeed(`Classified ${chalk.bold(questions.length)} questions`);
                 }
             } else {
-                // Step 3: Full LLM extraction for unstructured PDFs
-                spinner.start("Sending to Gemini for full extraction...");
-                questions = await analyzeDirect(pages, config, (msg) => {
-                    spinner.text = msg;
-                });
-                spinner.succeed(`LLM extracted ${chalk.bold(questions.length)} questions`);
+                // Step 3: Unstructured PDF
+                if (classification.avgCharsPerPage < 100) {
+                    // Scanned/image PDF — no extractable text, use native PDF upload
+                    console.log(chalk.gray(`  Low text density (${classification.avgCharsPerPage} chars/page) — using native PDF upload`));
+                    spinner.start("Sending PDF to Gemini for visual extraction...");
+                    questions = await analyzeNativePDF(absolutePath, config, (msg) => {
+                        spinner.text = msg;
+                    });
+                    spinner.succeed(`LLM extracted ${chalk.bold(questions.length)} questions (native PDF)`);
+                } else {
+                    // Has text but unstructured — use text-based extraction
+                    spinner.start("Sending to Gemini for full extraction...");
+                    questions = await analyzeDirect(pages, config, (msg) => {
+                        spinner.text = msg;
+                    });
+                    spinner.succeed(`LLM extracted ${chalk.bold(questions.length)} questions`);
+                }
             }
 
             // Filter
