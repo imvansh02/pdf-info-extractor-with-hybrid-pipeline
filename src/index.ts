@@ -29,7 +29,7 @@ program
     .command("extract")
     .description("Extract questions from a PDF file and output as LaTeX")
     .argument("<pdf>", "Path to the PDF file")
-    .option("-o, --output <path>", "Output .tex file path", "output/questions.tex")
+    .option("-o, --output <path>", "Output .tex file path")
     .option("-m, --model <model>", "Gemini model to use", "gemini-2.5-flash")
     .option(
         "-t, --types <types>",
@@ -137,7 +137,7 @@ program
                 includeAnswers: opts.includeAnswers,
             });
 
-            const outputPath = resolve(opts.output);
+            const outputPath = resolve(opts.output || `output/${basename(absolutePath, ".pdf")}.tex`);
             writeFileSync(outputPath, latex, "utf-8");
             spinner.succeed(`LaTeX written to ${chalk.bold(outputPath)}`);
 
@@ -184,7 +184,7 @@ program
     .command("fast-extract")
     .description("Extract questions using native PDF upload (faster, fewer API calls)")
     .argument("<pdf>", "Path to the PDF file")
-    .option("-o, --output <path>", "Output .tex file path", "output/questions.tex")
+    .option("-o, --output <path>", "Output .tex file path")
     .option("-m, --model <model>", "Gemini model to use", "gemini-2.5-flash")
     .option(
         "-t, --types <types>",
@@ -267,7 +267,7 @@ program
                 includeAnswers: opts.includeAnswers,
             });
 
-            const outputPath = resolve(opts.output);
+            const outputPath = resolve(opts.output || `output/${basename(absolutePath, ".pdf")}.tex`);
             writeFileSync(outputPath, latex, "utf-8");
             spinner.succeed(`LaTeX written to ${chalk.bold(outputPath)}`);
 
@@ -314,7 +314,7 @@ program
     .command("smart-extract")
     .description("Fastest: text extraction + single API call with structured output (no chunking)")
     .argument("<pdf>", "Path to the PDF file")
-    .option("-o, --output <path>", "Output .tex file path", "output/questions.tex")
+    .option("-o, --output <path>", "Output .tex file path")
     .option("-m, --model <model>", "Gemini model to use", "gemini-2.5-flash")
     .option("-t, --types <types>", 'Filter question types (e.g., MCQ,"Short Answer")')
     .option("-d, --difficulty <levels>", "Filter difficulty (e.g., Easy,Medium)")
@@ -382,7 +382,7 @@ program
             spinner.start("Generating LaTeX...");
             const title = basename(absolutePath, ".pdf");
             const latex = generateLatex(questions, { title, includeAnswers: opts.includeAnswers });
-            const outputPath = resolve(opts.output);
+            const outputPath = resolve(opts.output || `output/${basename(absolutePath, ".pdf")}.tex`);
             writeFileSync(outputPath, latex, "utf-8");
             spinner.succeed(`LaTeX written to ${chalk.bold(outputPath)}`);
 
@@ -422,7 +422,7 @@ program
     .command("auto-extract")
     .description("Hybrid: regex for structured PDFs, LLM fallback for unstructured (fastest overall)")
     .argument("<pdf>", "Path to the PDF file")
-    .option("-o, --output <path>", "Output .tex file path", "output/questions.tex")
+    .option("-o, --output <path>", "Output .tex file path")
     .option("-m, --model <model>", "Gemini model to use", "gemini-2.5-flash")
     .option("-t, --types <types>", 'Filter question types (e.g., MCQ,"Short Answer")')
     .option("-d, --difficulty <levels>", "Filter difficulty (e.g., Easy,Medium)")
@@ -537,7 +537,7 @@ program
             spinner.start("Generating LaTeX...");
             const title = basename(absolutePath, ".pdf");
             const latex = generateLatex(questions, { title, includeAnswers: opts.includeAnswers });
-            const outputPath = resolve(opts.output);
+            const outputPath = resolve(opts.output || `output/${basename(absolutePath, ".pdf")}.tex`);
             writeFileSync(outputPath, latex, "utf-8");
             spinner.succeed(`LaTeX written to ${chalk.bold(outputPath)}`);
 
